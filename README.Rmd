@@ -1,0 +1,106 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# fp
+
+# Overview
+
+Functional programming in R.
+
+## Installation
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("armcn/fp")
+```
+
+## Usage
+
+### Vector functions
+
+```{r}
+library(fp, warn.conflicts = FALSE)
+
+numbers <- 1:10
+numbers_list <- as.list(numbers)
+
+map(\(a) a + 1, numbers)
+
+map2(`+`, numbers, numbers)
+
+filter(\(a) a > 5, numbers)
+
+reduce(`+`, 0, numbers)
+
+scan(`*`, 1, numbers)
+
+any(\(a) a %% 2 == 0, numbers)
+
+all(\(a) a %% 2 == 0, numbers)
+
+member(5, numbers)
+
+first(numbers_list)
+
+last(numbers_list)
+
+head(numbers_list)
+
+tail(numbers)
+
+init(numbers)
+
+get_at(3, numbers_list)
+```
+
+### Function composition
+
+```{r}
+square <- \(a) a ^ 2
+is_even <- \(a) a %% 2 == 0
+numbers <- 1:10
+
+numbers |> 
+  map(square)() |>
+  filter(is_even)() |>
+  reduce(`+`, 0)()
+
+numbers %|>% 
+  map(square) %|>% 
+  filter(is_even) %|>% 
+  reduce(`+`, 0)
+
+pipe(
+  map(square), 
+  filter(is_even), 
+  reduce(`+`, 0)
+)(numbers)
+
+compose(
+  reduce(`+`, 0),
+  filter(is_even),
+  map(square)
+)(numbers)
+
+sum_even_squares <- 
+  reduce(`+`, 0) %.% 
+  filter(is_even) %.%
+  map(square)
+
+sum_even_squares(numbers)
+```
+
