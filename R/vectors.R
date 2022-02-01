@@ -1,14 +1,36 @@
 #' @export
 map <- curry(\(.f, xs) {
-  vec <-
-    res_vec(xs)
+  if (not_fp_functor(xs))
+    stop("map only works on atomic vectors or bare lists")
 
-  for (i in seq_along(xs))
-    vec[[i]] <-
-      .f(xs[[i]])
+  else if (rlang::is_empty(xs))
+    xs
 
-  vec
+  else if (rlang::is_bare_list(xs))
+    lapply(xs, .f)
+
+  else
+    map_atomic(.f, xs)
 })
+
+map_atomic <- \(.f, xs) {
+  new_xs <-
+    vctrs::vec_init(.f(xs[1L]), n = length(xs))
+
+  for (i in seq_along(xs)) {
+    new_x <-
+      .f(xs[i])
+
+    if (is.atomic(new_x))
+      new_xs[i] <-
+        new_x
+
+    else
+      stop("The mapper function must return atomic scalars")
+  }
+
+  new_xs
+}
 
 #' @export
 map2 <- curry(\(.f, xs, ys) {

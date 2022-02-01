@@ -72,7 +72,6 @@ get_at(3, numbers_list)
 ```{r}
 square <- \(a) a ^ 2
 is_even <- \(a) a %% 2 == 0
-numbers <- 1:10
 
 numbers |> 
   map(square)() |>
